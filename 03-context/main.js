@@ -10,6 +10,12 @@ const playerMachine = createMachine({
   context: {
     // Add initial context here for:
     // title, artist, duration, elapsed, likeStatus, volume
+    title: undefined,
+    artist: undefined,
+    duration: 0,
+    elapsed: 0,
+    likeStatus: 'unliked',
+    volume: 5
   },
   states: {
     loading: {
@@ -68,15 +74,20 @@ const playerMachine = createMachine({
       //   }
       // }
       // Also, reset the `elapsed` and `likeStatus` values.
+      title: (context, event) => event.data.title,
+      artist: (context, event) => event.data.artist,
+      duration: (context, event) => event.data.duration,
+      elapsed: 0,
+      likeStatus: 'unliked'
     }),
     likeSong: assign({
-      // Assign the `likeStatus` to "liked"
+      likeStatus: 'liked'
     }),
     unlikeSong: assign({
-      // Assign the `likeStatus` to 'unliked',
+      likeStatus: 'unliked'
     }),
     dislikeSong: assign({
-      // Assign the `likeStatus` to 'disliked',
+      likeStatus: 'disliked'
     }),
     assignVolume: assign({
       // Assign the `volume` to the `level` from the event.
@@ -85,6 +96,7 @@ const playerMachine = createMachine({
       //   type: 'VOLUME',
       //   level: 5
       // }
+      volume: (context, event) => event.volume
     }),
     assignTime: assign({
       // Assign the `elapsed` value to the `currentTime` from the event.
@@ -93,6 +105,7 @@ const playerMachine = createMachine({
       //   type: 'AUDIO.TIME',
       //   currentTime: 10
       // }
+      elapsed: (context, event) => event.currentTime
     }),
     skipSong: () => {
       console.log('Skipping song');
@@ -105,19 +118,19 @@ const playerMachine = createMachine({
 const service = interpret(playerMachine).start();
 window.service = service;
 
-elements.elPlayButton.addEventListener('click', () => {
+elements?.elPlayButton?.addEventListener('click', () => {
   service.send({ type: 'PLAY' });
 });
-elements.elPauseButton.addEventListener('click', () => {
+elements?.elPauseButton?.addEventListener('click', () => {
   service.send({ type: 'PAUSE' });
 });
-elements.elSkipButton.addEventListener('click', () => {
+elements?.elSkipButton?.addEventListener('click', () => {
   service.send({ type: 'SKIP' });
 });
-elements.elLikeButton.addEventListener('click', () => {
+elements?.elLikeButton?.addEventListener('click', () => {
   service.send({ type: 'LIKE' });
 });
-elements.elDislikeButton.addEventListener('click', () => {
+elements?.elDislikeButton?.addEventListener('click', () => {
   service.send({ type: 'DISLIKE' });
 });
 
